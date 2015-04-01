@@ -1,19 +1,13 @@
-var request		= require('request');
+var request = require('request')
 var crypto		= require('crypto');
 var querystring	= require('querystring');
+var nonce = new Date() * 1000; // spoof microsecond
 
-/**
- * KrakenClient connects to the Kraken.com API
- * @param {String} key    API Key
- * @param {String} secret API Secret
- * @param {String} [otp]  Two-factor password (optional) (also, doesn't work)
- */
-function KrakenClient(key, secret, otp) {
+function LBCClient(key, secret, otp) {
 	var self = this;
-
+  
 	var config = {
-		url: 'https://api.kraken.com',
-		version: '0',
+		url: 'https://localbitcoins.com/api',
 		key: key,
 		secret: secret,
 		otp: otp,
@@ -29,8 +23,8 @@ function KrakenClient(key, secret, otp) {
 	 */
 	function api(method, params, callback) {
 		var methods = {
-			public: ['Time', 'Assets', 'AssetPairs', 'Ticker', 'Depth', 'Trades', 'Spread', 'OHLC'],
-			private: ['Balance', 'TradeBalance', 'OpenOrders', 'ClosedOrders', 'QueryOrders', 'TradesHistory', 'QueryTrades', 'OpenPositions', 'Ledgers', 'QueryLedgers', 'TradeVolume', 'AddOrder', 'CancelOrder', 'DepositMethods', 'DepositAddresses', 'DepositStatus', 'WithdrawInfo', 'Withdraw', 'WithdrawStatus', 'WithdrawCancel']
+			public: [],
+			private: ['ad-get', 'ad-get/ad_id', 'myself', 'ClosedOrders', 'QueryOrders', 'TradesHistory', 'QueryTrades', 'OpenPositions', 'Ledgers', 'QueryLedgers', 'TradeVolume', 'AddOrder', 'CancelOrder', 'DepositMethods', 'DepositAddresses', 'DepositStatus', 'WithdrawInfo', 'Withdraw', 'WithdrawStatus', 'WithdrawCancel']
 		};
 		if(methods.public.indexOf(method) !== -1) {
 			return publicMethod(method, params, callback);
@@ -53,7 +47,7 @@ function KrakenClient(key, secret, otp) {
 	function publicMethod(method, params, callback) {
 		params = params || {};
 
-		var path	= '/' + config.version + '/public/' + method;
+		var path	= '/' + method;
 		var url		= config.url + path;
 
 		return rawRequest(url, {}, params, callback);
@@ -69,7 +63,7 @@ function KrakenClient(key, secret, otp) {
 	function privateMethod(method, params, callback) {
 		params = params || {};
 
-		var path	= '/' + config.version + '/private/' + method;
+		var path	= '/' + method;
 		var url		= config.url + path;
 
 		params.nonce = new Date() * 1000; // spoof microsecond
@@ -81,8 +75,9 @@ function KrakenClient(key, secret, otp) {
 		var signature = getMessageSignature(path, params, params.nonce);
 
 		var headers = {
-			'API-Key': config.key,
-			'API-Sign': signature
+			'Apiauth-Key': config.key,
+			'Apiauth-Nonce': nonce,
+			'Apiauth-Signature': signature
 		};
 
 		return rawRequest(url, headers, params, callback);
@@ -99,10 +94,9 @@ function KrakenClient(key, secret, otp) {
 		var message	= querystring.stringify(request);
 		var secret	= new Buffer(config.secret, 'base64');
 		var hash	= new crypto.createHash('sha256');
-		var hmac	= new crypto.createHmac('sha512', secret);
-
-		var hash_digest	= hash.update(nonce + message).digest('binary');
-		var hmac_digest	= hmac.update(path + hash_digest, 'binary').digest('base64');
+		var hmac	= new crypto.createHmac('sha256', secret);
+		var hash_digest	= nonce + config.key + config.path + message;
+		var hmac_digest	= hmac.update(hash_digest, 'binary').digest('binary').toUpperCase();
 
 		return hmac_digest;
 	}
@@ -117,7 +111,7 @@ function KrakenClient(key, secret, otp) {
 	 */
 	function rawRequest(url, headers, params, callback) {
 		// Set custom User-Agent string
-		headers['User-Agent'] = 'Kraken Javascript API Client';
+		headers['User-Agent'] = 'LocalBitcoins NodeJS API Client';
 
 		var options = {
 			url: url,
@@ -161,4 +155,15 @@ function KrakenClient(key, secret, otp) {
 	self.privateMethod	= privateMethod;
 }
 
-module.exports = KrakenClient;
+var lbc = new LBCClient('key', 'secret')
+
+lbc.api('myself', null, function(error, data) {
+    if(error) {
+       console.log("LBC error: "+error);
+        }
+        else {
+            console.log("LBC result: " + JSON.stringify(data));
+        };
+    });
+
+module.exports = LBCClient;
