@@ -1,25 +1,25 @@
-Node Kraken
+Node LocalBitcoins
 ===========
 
-NodeJS Client Library for the Kraken (kraken.com) API
+NodeJS Client Library for the LocalBitcoins API
 
-This is an asynchronous node js client for the kraken.com API.
+This is an asynchronous node js client for the localbitcoins.com API.
 
-It exposes all the API methods found here: https://www.kraken.com/help/api through the 'api' method:
+It exposes all the API methods found here: https://localbitcoins.com/api-docs/ through the 'api' method:
 
 Example Usage:
 
 ```javascript
-var KrakenClient = require('kraken-api');
-var kraken = new KrakenClient('api_key', 'api_secret');
+var LBCClient = require('kraken-api');
+var lbc = new LBCClient('api_key', 'api_secret');
 
 // Display user's balance
-kraken.api('Balance', null, function(error, data) {
+lbc.api('myself', null, function(error, data) {
     if(error) {
         console.log(error);
     }
     else {
-        console.log(data.result);
+        console.log(data);
     }
 });
 
