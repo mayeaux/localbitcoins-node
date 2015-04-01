@@ -39,9 +39,4 @@ Thanks to @tehsenaus and @petermrg for pointing this out.
 
 Credit:
 
-I used the example php implementation at https://github.com/payward/kraken-api-client and the python implementation at https://github.com/veox/krakenex as references.
-
-
-Feeling generous? Send me a fraction of a bitcoin!
-
-12X8GyUpfYxEP7sh1QaU4ngWYpzXJByQn5
+I used the example node implementation at https://github.com/nothingisdead/npm-kraken-api and the python implementation at https://localbitcoins.com/api-docs/ as references.
