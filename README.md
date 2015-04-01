@@ -10,10 +10,10 @@ It exposes all the API methods found here: https://localbitcoins.com/api-docs/ t
 Example Usage:
 
 ```javascript
-var LBCClient = require('kraken-api');
+var LBCClient = require('./lbc.js');
 var lbc = new LBCClient('api_key', 'api_secret');
 
-// Display user's balance
+// Display user's info
 lbc.api('myself', null, function(error, data) {
     if(error) {
         console.log(error);
@@ -23,15 +23,6 @@ lbc.api('myself', null, function(error, data) {
     }
 });
 
-// Get Ticker Info
-kraken.api('Ticker', {"pair": 'XBTCXLTC'}, function(error, data) {
-    if(error) {
-        console.log(error);
-    }
-    else {
-        console.log(data.result);
-    }
-});
 ```
 
 **Update:**
