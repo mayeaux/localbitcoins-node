@@ -24,7 +24,7 @@ function LBCClient(key, secret, otp) {
 	function api(method, params, callback) {
 		var methods = {
 			public: [],
-			private: ['ad-get', 'ad-get/ad_id', 'myself', 'ClosedOrders', 'QueryOrders', 'TradesHistory', 'QueryTrades', 'OpenPositions', 'Ledgers', 'QueryLedgers', 'TradeVolume', 'AddOrder', 'CancelOrder', 'DepositMethods', 'DepositAddresses', 'DepositStatus', 'WithdrawInfo', 'Withdraw', 'WithdrawStatus', 'WithdrawCancel']
+			private: ['ad-get', 'ad-get/ad_id', 'myself']
 		};
 		if(methods.public.indexOf(method) !== -1) {
 			return publicMethod(method, params, callback);
