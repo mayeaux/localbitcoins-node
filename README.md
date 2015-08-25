@@ -9,9 +9,11 @@ It exposes all the API methods found here: https://localbitcoins.com/api-docs/ t
 
 Example Usage:
 
+`npm install localbitcoins-node`
+
 ```javascript
-var LBCClient = require('./lbc.js');
-var lbc = new LBCClient('api_key', 'api_secret');
+var LBCClient = require(localbitcoins-node);
+var lbc = new LBCClient(api_key, api_secret);
 
 // Display user's info
 lbc.api('myself', null, function(error, data) {
@@ -25,18 +27,7 @@ lbc.api('myself', null, function(error, data) {
 
 ```
 
-**Update:**
-
-As of version 0.1.0, the callback passed to the *api* function conforms to the Node.js standard of
-
-```javascript
-function(error, data) {
-    // ...
-}
-```
-
-Thanks to @tehsenaus and @petermrg for pointing this out.
 
 Credit:
 
-I used the example node implementation at https://github.com/nothingisdead/npm-kraken-api and the python implementation at https://localbitcoins.com/api-docs/ as references.
+Forked from https://github.com/vnistor/
