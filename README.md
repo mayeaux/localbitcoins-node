@@ -27,6 +27,8 @@ lbc.api('myself', null, function(error, data) {
 
 ```
 
+To-Do: 
+- Get different methods working with querystring parameters added to message
 
 Credit:
 
