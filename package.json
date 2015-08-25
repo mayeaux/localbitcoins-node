@@ -1,14 +1,14 @@
 {
-  "name": "kraken-api",
-  "version": "0.1.6",
-  "description": "kraken.com API client library for NodeJS",
+  "name": "localbitcoins-node",
+  "version": "0.0.1",
+  "description": "LocalBitcoins API wrapper for NodeJS",
   "keywords": [
-    "kraken",
+    "localbitcoins",
     "api",
     "btc",
     "bitcoin"
   ],
-  "author": "Robert Myers (https://github.com/nothingisdead)",
+  "author": "Anthony Mayfield (https://github.com/mrmayfield)",
   "contributors": [
   ],
   "license": "MIT",
@@ -18,15 +18,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/nothingisdead/npm-kraken-api"
+    "url": "https://github.com/mrmayfield/localbitcoins-node"
   },
-  "main": "kraken.js",
+  "main": "localbitcoins.js",
   "engines": {
     "node": ">=0.10"
   },
   "bugs": {
-    "url": "https://github.com/nothingisdead/npm-kraken-api/issues",
-    "email": "rbmyr8@gmail.com"
+    "url": "https://github.com/mrmayfield/localbitcoins-node/issues",
+    "email": "contact@anthonymayfield.com"
   },
   "readmeFilename": "README.md"
 }
