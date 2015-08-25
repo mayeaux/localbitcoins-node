@@ -1,7 +1,8 @@
 var request = require('request')
 var crypto		= require('crypto');
 var querystring	= require('querystring');
-var nonce = new Date() * 1000; // spoof microsecond
+var nonce = (new Date).getTime();
+
 
 function LBCClient(key, secret, otp) {
 	var self = this;
@@ -66,15 +67,10 @@ function LBCClient(key, secret, otp) {
 		var path	= '/' + method;
 		var url		= config.url + path;
 
-		params.nonce = new Date() * 1000; // spoof microsecond
-
-		if(config.otp !== undefined) {
-			params.otp = config.otp;
-		}
-
-		var signature = getMessageSignature(path, params, params.nonce);
+		var signature = getMessageSignature(path, params, nonce);
 
 		var headers = {
+			'Content-Type': 'application/json',
 			'Apiauth-Key': config.key,
 			'Apiauth-Nonce': nonce,
 			'Apiauth-Signature': signature
@@ -91,14 +87,10 @@ function LBCClient(key, secret, otp) {
 	 * @return {String}          The request signature
 	 */
 	function getMessageSignature(path, request, nonce) {
-		var message	= querystring.stringify(request);
-		var secret	= new Buffer(config.secret, 'base64');
-		var hash	= new crypto.createHash('sha256');
-		var hmac	= new crypto.createHmac('sha256', secret);
-		var hash_digest	= nonce + config.key + config.path + message;
-		var hmac_digest	= hmac.update(hash_digest, 'binary').digest('binary').toUpperCase();
-
-		return hmac_digest;
+		var path = '/api' + path + '/';
+		var message = nonce + config.key + path;
+		var auth_hash = crypto.createHmac("sha256", config.secret).update(message).digest('hex').toUpperCase();
+		return auth_hash;
 	}
 
 	/**
@@ -110,18 +102,13 @@ function LBCClient(key, secret, otp) {
 	 * @return {Object}            The request object
 	 */
 	function rawRequest(url, headers, params, callback) {
-		// Set custom User-Agent string
-		headers['User-Agent'] = 'LocalBitcoins NodeJS API Client';
 
 		var options = {
-			url: url,
-			method: 'POST',
+			url: url + '/',
 			headers: headers,
-			form: params,
-			timeout: config.timeoutMS
 		};
 
-		var req = request.post(options, function(error, response, body) {
+		var req = request.get(options, function(error, response, body) {
 			if(typeof callback === 'function') {
 				var data;
 
@@ -154,16 +141,5 @@ function LBCClient(key, secret, otp) {
 	self.publicMethod	= publicMethod;
 	self.privateMethod	= privateMethod;
 }
-
-var lbc = new LBCClient('key', 'secret')
-
-lbc.api('myself', null, function(error, data) {
-    if(error) {
-       console.log("LBC error: "+error);
-        }
-        else {
-            console.log("LBC result: " + JSON.stringify(data));
-        };
-    });
 
 module.exports = LBCClient;
