@@ -32,6 +32,7 @@ function LBCClient(key, secret, otp) {
 			'wallet-send'
 			]
 		};
+		console.log(params);
 		if(methods.public.indexOf(method) !== -1) {
 			return publicMethod(method, params, callback);
 		}
@@ -91,9 +92,10 @@ function LBCClient(key, secret, otp) {
 	 * @param  {Integer} nonce   A unique, incrementing integer
 	 * @return {String}          The request signature
 	 */
-	function getMessageSignature(path, request, nonce) {
+	function getMessageSignature(path, params, nonce) {
+		var postParameters	= querystring.stringify(params);
 		var path = '/api' + path + '/';
-		var message = nonce + config.key + path;
+		var message = nonce + config.key + path + postParameters;
 		var auth_hash = crypto.createHmac("sha256", config.secret).update(message).digest('hex').toUpperCase();
 		return auth_hash;
 	}
@@ -111,7 +113,10 @@ function LBCClient(key, secret, otp) {
 		var options = {
 			url: url + '/',
 			headers: headers,
+			form: params,
 		};
+
+		console.log(options);
 
 		var req = request.post(options, function(error, response, body) {
 			if(typeof callback === 'function') {
