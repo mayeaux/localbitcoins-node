@@ -24,15 +24,15 @@ function LBCClient(key, secret, otp) {
 	 */
 	function api(method, params, callback) {
 		var methods = {
-			public: [],
-			private: ['ad-get', 'ad-get/ad_id', 'myself', 
+			onlineAds: ['buy-bitcoins-online'],
+			public: ['countrycodes'],
+			private: ['ad-get', 'ad-get/ad_id', 'myself', 'ads',
 			'dashboard', 'dashboard/released', 'dashboard/canceled', 'dashboard/closed', 
 			'dashboard/released/buyer', 'dashboard/canceled/buyer', 'dashboard/closed/buyer',
 			'dashboard/released/seller', 'dashboard/canceled/seller', 'dashboard/closed/seller',
 			'wallet-send'
 			]
 		};
-		console.log(params);
 		if(methods.public.indexOf(method) !== -1) {
 			return publicMethod(method, params, callback);
 		}
@@ -115,8 +115,6 @@ function LBCClient(key, secret, otp) {
 			headers: headers,
 			form: params,
 		};
-
-		console.log(options);
 
 		var req = request.post(options, function(error, response, body) {
 			if(typeof callback === 'function') {
