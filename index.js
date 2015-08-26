@@ -25,7 +25,12 @@ function LBCClient(key, secret, otp) {
 	function api(method, params, callback) {
 		var methods = {
 			public: [],
-			private: ['ad-get', 'ad-get/ad_id', 'myself']
+			private: ['ad-get', 'ad-get/ad_id', 'myself', 
+			'dashboard', 'dashboard/released', 'dashboard/canceled', 'dashboard/closed', 
+			'dashboard/released/buyer', 'dashboard/canceled/buyer', 'dashboard/closed/buyer',
+			'dashboard/released/seller', 'dashboard/canceled/seller', 'dashboard/closed/seller',
+			'wallet-send'
+			]
 		};
 		if(methods.public.indexOf(method) !== -1) {
 			return publicMethod(method, params, callback);
@@ -70,7 +75,7 @@ function LBCClient(key, secret, otp) {
 		var signature = getMessageSignature(path, params, nonce);
 
 		var headers = {
-			'Content-Type': 'application/json',
+			'Content-Type': 'application/x-www-form-urlencoded',
 			'Apiauth-Key': config.key,
 			'Apiauth-Nonce': nonce,
 			'Apiauth-Signature': signature
@@ -108,7 +113,7 @@ function LBCClient(key, secret, otp) {
 			headers: headers,
 		};
 
-		var req = request.get(options, function(error, response, body) {
+		var req = request.post(options, function(error, response, body) {
 			if(typeof callback === 'function') {
 				var data;
 
