@@ -6,7 +6,7 @@ var nonce = (new Date).getTime();
 
 function LBCClient(key, secret, otp) {
 	var self = this;
-  
+
 	var config = {
 		url: 'https://localbitcoins.com/api',
 		key: key,
@@ -27,10 +27,10 @@ function LBCClient(key, secret, otp) {
 			onlineAds: ['buy-bitcoins-online'],
 			public: ['countrycodes'],
 			private: ['ad-get', 'ad-get/ad_id', 'myself', 'ads',
-			'dashboard', 'dashboard/released', 'dashboard/canceled', 'dashboard/closed', 
+			'dashboard', 'dashboard/released', 'dashboard/canceled', 'dashboard/closed',
 			'dashboard/released/buyer', 'dashboard/canceled/buyer', 'dashboard/closed/buyer',
 			'dashboard/released/seller', 'dashboard/canceled/seller', 'dashboard/closed/seller',
-			'wallet-send'
+			'wallet-send', 'wallet-balance', 'wallet-addr'
 			]
 		};
 		if(methods.public.indexOf(method) !== -1) {
