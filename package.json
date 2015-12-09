@@ -1,6 +1,6 @@
 {
   "name": "localbitcoins-node",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "LocalBitcoins API wrapper for NodeJS",
   "keywords": [
     "localbitcoins",
@@ -9,7 +9,7 @@
     "bitcoin"
   ],
   "author": "Anthony Mayfield (https://github.com/mrmayfield)",
-  "contributors": [],
+  "contributors": ["Vlad Nistor (https://github.com/vnistor)"],
   "license": "MIT",
   "dependencies": {
     "querystring": ">=0.2.0",

@@ -15,8 +15,12 @@ Example Usage:
 var LBCClient = require('localbitcoins-node');
 var lbc = new LBCClient(api_key, api_secret);
 
+var ad_id; //set to value when applicable
+var params = {};
+
+
 // Display user's info
-lbc.api('myself', null, function(error, data) {
+lbc.api('myself', ad_id, params, function(error, data) {
     if(error) {
         console.log(error);
     }
@@ -27,7 +31,7 @@ lbc.api('myself', null, function(error, data) {
 
 ```
 
-To-Do: 
+To-Do:
 - Get different methods working with querystring parameters added to message
 
 Credit:
