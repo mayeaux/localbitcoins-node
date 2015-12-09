@@ -12,7 +12,7 @@ Example Usage:
 `npm install localbitcoins-node`
 
 ```javascript
-var LBCClient = require(localbitcoins-node);
+var LBCClient = require('localbitcoins-node');
 var lbc = new LBCClient(api_key, api_secret);
 
 // Display user's info
