@@ -123,11 +123,20 @@ function LBCClient(key, secret, otp) {
 	 */
 	function rawRequest(url, headers, params, callback) {
 
-		var options = {
-			url: url + '/',
-			headers: headers,
-			form: params,
-		};
+    var gets = ['ad-get', 'dashboard', 'dashboard/released', 'dashboard/canceled',
+    'dashboard/closed', 'dashboard/released/buyer', 'dashboard/canceled/buyer',
+    'dashboard/closed/buyer', 'dashboard/released/seller', 'dashboard/canceled/seller',
+    'dashboard/closed/seller'];
+    var posts = [ 'ad-get/ad_id', 'myself', 'ads',
+    'wallet-send', 'wallet-balance', 'wallet-addr'];
+
+    if (posts.indexOf(posts) !== -1) {
+
+			var options = {
+				url: url + '/',
+				headers: headers,
+				form: params,
+			};
 
 		var req = request.post(options, function(error, response, body) {
 			if(typeof callback === 'function') {
@@ -156,6 +165,42 @@ function LBCClient(key, secret, otp) {
 		});
 
 		return req;
+
+	 } else {
+
+		var options = {
+			url: url + '/',
+			headers: headers,
+		};
+
+		var req = request.get(options, function(error, response, body) {
+			if(typeof callback === 'function') {
+				var data;
+
+				if(error) {
+					callback.call(self, new Error('Error in server response: ' + JSON.stringify(error)), null);
+					return;
+				}
+
+				try {
+					data = JSON.parse(body);
+				}
+				catch(e) {
+					callback.call(self, new Error('Could not understand response from server: ' + body), null);
+					return;
+				}
+
+				if(data.error && data.error.length) {
+					callback.call(self, data.error, null);
+				}
+				else {
+					callback.call(self, null, data);
+				}
+			}
+		});
+
+		return req;
+	}
 	}
 
 	self.api			= api;
