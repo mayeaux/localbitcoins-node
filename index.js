@@ -95,7 +95,7 @@ function LBCClient(key, secret, otp) {
 			'Apiauth-Signature': signature
 		};
 
-		return rawRequest(url, headers, params, callback);
+		return rawRequest(url, headers, params, method, callback);
 	}
 
 	/**
@@ -121,7 +121,7 @@ function LBCClient(key, secret, otp) {
 	 * @param  {Function} callback A callback function to call when the request is complete
 	 * @return {Object}            The request object
 	 */
-	function rawRequest(url, headers, params, callback) {
+	function rawRequest(url, headers, params, method, callback) {
 
     var gets = ['ad-get', 'dashboard', 'dashboard/released', 'dashboard/canceled',
     'dashboard/closed', 'dashboard/released/buyer', 'dashboard/canceled/buyer',
@@ -130,7 +130,7 @@ function LBCClient(key, secret, otp) {
     var posts = [ 'ad-get/ad_id', 'myself', 'ads',
     'wallet-send', 'wallet-balance', 'wallet-addr'];
 
-    if (posts.indexOf(posts) !== -1) {
+    if (posts.indexOf(method) !== -1) {
 
 			var options = {
 				url: url + '/',
