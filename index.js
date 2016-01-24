@@ -6,7 +6,7 @@ var nonce = (new Date).getTime();
 
 function LBCClient(key, secret, otp) {
 	var self = this;
-  
+
 	var config = {
 		url: 'https://localbitcoins.com/api',
 		key: key,
@@ -22,22 +22,22 @@ function LBCClient(key, secret, otp) {
 	 * @param  {Function} callback A callback function to be executed when the request is complete
 	 * @return {Object}            The request object
 	 */
-	function api(method, params, callback) {
+	function api(method, ad_id, params, callback) {
 		var methods = {
 			onlineAds: ['buy-bitcoins-online'],
 			public: ['countrycodes'],
 			private: ['ad-get', 'ad-get/ad_id', 'myself', 'ads',
-			'dashboard', 'dashboard/released', 'dashboard/canceled', 'dashboard/closed', 
+			'dashboard', 'dashboard/released', 'dashboard/canceled', 'dashboard/closed',
 			'dashboard/released/buyer', 'dashboard/canceled/buyer', 'dashboard/closed/buyer',
 			'dashboard/released/seller', 'dashboard/canceled/seller', 'dashboard/closed/seller',
-			'wallet-send'
+			'wallet-send', 'wallet'
 			]
 		};
 		if(methods.public.indexOf(method) !== -1) {
-			return publicMethod(method, params, callback);
+			return publicMethod(method, params, ad_id, callback);
 		}
 		else if(methods.private.indexOf(method) !== -1) {
-			return privateMethod(method, params, callback);
+			return privateMethod(method, params, ad_id, callback);
 		}
 		else {
 			throw new Error(method + ' is not a valid API method.');
@@ -51,10 +51,16 @@ function LBCClient(key, secret, otp) {
 	 * @param  {Function} callback A callback function to be executed when the request is complete
 	 * @return {Object}            The request object
 	 */
-	function publicMethod(method, params, callback) {
+	function publicMethod(method, params, ad_id, callback) {
 		params = params || {};
 
-		var path	= '/' + method;
+		var path;
+		if (ad_id) {
+			path	= '/' + method + '/' + ad_id;
+		} else {
+			path	= '/' + method;
+		}
+
 		var url		= config.url + path;
 
 		return rawRequest(url, {}, params, callback);
@@ -67,10 +73,17 @@ function LBCClient(key, secret, otp) {
 	 * @param  {Function} callback A callback function to be executed when the request is complete
 	 * @return {Object}            The request object
 	 */
-	function privateMethod(method, params, callback) {
+	function privateMethod(method, params, ad_id, callback) {
 		params = params || {};
 
-		var path	= '/' + method;
+		var path;
+
+		if (ad_id) {
+			path	= '/' + method + '/' + ad_id;
+		} else {
+			path	= '/' + method;
+		}
+
 		var url		= config.url + path;
 
 		var signature = getMessageSignature(path, params, nonce);
@@ -82,7 +95,7 @@ function LBCClient(key, secret, otp) {
 			'Apiauth-Signature': signature
 		};
 
-		return rawRequest(url, headers, params, callback);
+		return rawRequest(url, headers, params, method, callback);
 	}
 
 	/**
@@ -108,13 +121,22 @@ function LBCClient(key, secret, otp) {
 	 * @param  {Function} callback A callback function to call when the request is complete
 	 * @return {Object}            The request object
 	 */
-	function rawRequest(url, headers, params, callback) {
+	function rawRequest(url, headers, params, method, callback) {
 
-		var options = {
-			url: url + '/',
-			headers: headers,
-			form: params,
-		};
+    var gets = ['ad-get', 'dashboard', 'dashboard/released', 'dashboard/canceled',
+    'dashboard/closed', 'dashboard/released/buyer', 'dashboard/canceled/buyer',
+    'dashboard/closed/buyer', 'dashboard/released/seller', 'dashboard/canceled/seller',
+    'dashboard/closed/seller', 'wallet'];
+    var posts = [ 'ad-get/ad_id', 'myself', 'ads',
+    'wallet-send', 'wallet-balance', 'wallet-addr'];
+
+    if (posts.indexOf(method) !== -1) {
+
+			var options = {
+				url: url + '/',
+				headers: headers,
+				form: params,
+			};
 
 		var req = request.post(options, function(error, response, body) {
 			if(typeof callback === 'function') {
@@ -143,6 +165,42 @@ function LBCClient(key, secret, otp) {
 		});
 
 		return req;
+
+	 } else {
+
+		var options = {
+			url: url + '/',
+			headers: headers,
+		};
+
+		var req = request.get(options, function(error, response, body) {
+			if(typeof callback === 'function') {
+				var data;
+
+				if(error) {
+					callback.call(self, new Error('Error in server response: ' + JSON.stringify(error)), null);
+					return;
+				}
+
+				try {
+					data = JSON.parse(body);
+				}
+				catch(e) {
+					callback.call(self, new Error('Could not understand response from server: ' + body), null);
+					return;
+				}
+
+				if(data.error && data.error.length) {
+					callback.call(self, data.error, null);
+				}
+				else {
+					callback.call(self, null, data);
+				}
+			}
+		});
+
+		return req;
+	}
 	}
 
 	self.api			= api;
